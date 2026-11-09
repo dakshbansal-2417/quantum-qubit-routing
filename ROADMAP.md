@@ -14,7 +14,7 @@ Each step ends with a commit + push to GitHub, so the repo always shows a workin
 | 3 | Easy model | `src/easy_qp.py`: spectral placement + Ky Fan certificate + LP snapping | Formulation (easy) | ✅ pushed |
 | 4 | Hard model | `src/hard_milp.py`: time-expanded SWAP MILP (HiGHS) | Formulation (hard) | ✅ pushed |
 | 5 | Verification + baseline | `src/verify.py`: replay, CheckMap, unitary check, SABRE | Solution: "verification needed" | ✅ pushed |
-| 6 | Experiments | `experiments/run_all.py` → `results.csv`, `solutions.json` | Solution: objective + key variables | 🔄 running |
+| 6 | Experiments | `experiments/run_all.py` → `results.csv`, `solutions.json` | Solution: objective + key variables | ✅ pushed |
 | 7 | Analysis & plots | `analysis/`: layouts on chip, easy vs hard vs SABRE bars, solve time vs size, price of realism | Analysis | ⬜ |
 | 8 | Formulation + results slides | `docs/` deck for the 10-min presentation | Milestones 2–3 | ⬜ |
 | 9 | Reproducibility | pinned `requirements.txt`, data download script, step-by-step README for Windows/macOS/Linux, tested on a fresh clone | Code submission | ⬜ |
@@ -26,11 +26,12 @@ Each step ends with a commit + push to GitHub, so the repo always shows a workin
 
 **3. Easy model.** `min tr(XᵀLX)` s.t. `1ᵀX = 0`, `XᵀX = I`. Exact optimum from Laplacian eigenvectors. Certificate: objective = λ₂ + λ₃. Snap to physical qubits with linear assignment.
 
-**4. Hard model.** Binary `x[i,p,t]` and `s[e,t]`. Minimize total SWAPs subject to placement, adjacency, disjoint-SWAP, movement and order constraints. Optional fixed initial layout (easy layout + optimal routing).
+**4. Hard model.** Binary `x[i,p,t]` and `s[e,t]`. Minimize total SWAPs subject to placement, adjacency, disjoint-SWAP, movement and dependency-order constraints. Gates on disjoint qubits may share a time slot. Strengthening cuts: two-way adjacency, no SWAP of two empty spots. Warm start from the better of a lookahead greedy router and SABRE, so the MILP is never worse than SABRE. Optional fixed initial layout (easy layout + optimal routing).
 
 **5. Verification.** Every solution is replayed by hand, checked with Qiskit `CheckMap`, and (for regions ≤ 11 qubits) proven unitarily equivalent to the original circuit. SABRE (best of 20 seeds) is the industry baseline.
 
-**6. Experiments.** All QASMBench small circuits with ≥ 3 qubits and ≤ 45 two-qubit gates, 120 s solver limit. Also re-solve with R+1 SWAP rounds per gate to show R is large enough.
+**6. Experiments.** All QASMBench small circuits with ≥ 3 qubits and ≤ 45 distinct two-qubit gates, 120 s solver limit. Also re-solve with R+1 SWAP rounds per gap to show R is large enough.
+Result: 26 circuits, all verified. 17 solved to proven optimality; 9 larger ones (n ≥ 5, ≥ 10 distinct gates) hit the time limit and are reported with their lower bound. The easy layout costs up to ~2× the hard optimum (e.g. adder_n4 4 vs 2, qaoa_n6 15 vs 8, ising_n10 10 vs 5).
 
 **7. Analysis.** Price of realism = easy-ideal (0 SWAPs) vs hard optimum. Value of joint optimization = easy layout + optimal routing vs hard optimum. Success-probability estimate `(1-ε)^(3·SWAPs)`. Scaling: MILP size and time vs circuit size, and where it stops being tractable.
 
