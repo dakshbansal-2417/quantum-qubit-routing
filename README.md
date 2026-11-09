@@ -12,6 +12,29 @@ Course optimization project. We pick where each logical qubit starts on the chip
 - **Easy:** spectral / quadratic placement (continuous positions), snapped to hardware via linear assignment
 - **Hard:** time-expanded MILP: binary placement `x[i,p,t]` and SWAP `s[e,t]` variables, minimizing total SWAPs under adjacency and gate-order constraints
 
+## Setup
+```bash
+python -m venv .venv            # needs Python 3.10–3.14
+.venv/Scripts/activate          # Windows; on macOS/Linux: source .venv/bin/activate
+pip install -r requirements.txt
+git clone --depth 1 --filter=blob:none --sparse https://github.com/pnnl/QASMBench.git data/QASMBench
+git -C data/QASMBench sparse-checkout set small
+```
+
+## Run
+```bash
+python src/load_data.py                 # list circuits and their sizes
+python experiments/run_all.py           # easy + hard + SABRE on all small circuits
+```
+Results go to `experiments/results/results.csv` (one row per circuit) and `solutions.json` (layouts and SWAP sequences).
+
+| Module | What it does |
+|---|---|
+| `src/load_data.py` | FakeBrisbane coupling graph, hop distances, QASMBench parsing into ordered CNOT lists |
+| `src/easy_qp.py` | Spectral placement (global optimum via Laplacian eigenvectors, Ky Fan certificate) + LP snapping to the chip |
+| `src/hard_milp.py` | Time-expanded MILP over placement `x[i,p,t]` and SWAP `s[e,t]` variables, solved with HiGHS |
+| `src/verify.py` | Replay check, Qiskit `CheckMap`, unitary equivalence, SABRE baseline |
+
 ## Layout
 ```
 data/         chosen circuit subset, cached coupling map
