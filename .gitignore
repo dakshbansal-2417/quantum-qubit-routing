@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.ipynb_checkpoints/
+
+# Solver / run artifacts
+*.lp
+*.mps
+*.log
+*.sol
+
+# Large external data (clone separately, commit only the chosen subset)
+data/QASMBench/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
