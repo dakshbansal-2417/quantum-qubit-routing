@@ -33,6 +33,7 @@ Results go to `experiments/results/results.csv` (one row per circuit) and `solut
 | `src/load_data.py` | FakeBrisbane coupling graph, hop distances, QASMBench parsing into ordered CNOT lists |
 | `src/easy_qp.py` | Spectral placement (global optimum via Laplacian eigenvectors, Ky Fan certificate) + LP snapping to the chip |
 | `src/hard_milp.py` | Time-expanded MILP over placement `x[i,p,t]` and SWAP `s[e,t]` variables, solved with HiGHS |
+| `src/exact_search.py` | Exact breadth-first search of the same hard problem: true optimum over all slot structures, proven lower bound, warm start for the MILP |
 | `src/verify.py` | Replay check, Qiskit `CheckMap`, unitary equivalence, SABRE baseline |
 
 ## Layout

@@ -158,6 +158,18 @@ class WarmStart:
         return sum(len(rnd) for gap in self.gaps for rnd in gap)
 
 
+def pack_rounds(swaps) -> Rounds:
+    """Pack an ordered SWAP list into rounds of disjoint SWAPs, as early as possible."""
+    rounds, when = [], {}
+    for p, q in swaps:
+        r = 1 + max(when.get(p, -1), when.get(q, -1))
+        while len(rounds) <= r:
+            rounds.append([])
+        rounds[r].append((min(p, q), max(p, q)))
+        when[p] = when[q] = r
+    return rounds
+
+
 def greedy_warm_start(gates, layout, hw: Hardware) -> WarmStart:
     slots, gaps, rep = greedy_route(gates, layout, hw)
     slot_of_uniq = {g: k for k, sl in enumerate(slots) for g in sl}
