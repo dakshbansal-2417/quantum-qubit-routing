@@ -1,7 +1,9 @@
-qiskit>=2.0
-qiskit-ibm-runtime>=0.40
-networkx>=3.0
-numpy>=2.0
-scipy>=1.12
-pandas>=2.0
-matplotlib>=3.8
+# Exact versions the results in experiments/results/ were produced with (Python 3.14).
+qiskit==2.6.2
+qiskit-ibm-runtime==0.51.0
+highspy==1.15.1
+networkx==3.7
+numpy==2.5.4
+scipy==1.18.1
+pandas==3.1.1
+matplotlib==3.11.2
