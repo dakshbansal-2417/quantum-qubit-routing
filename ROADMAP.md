@@ -15,9 +15,9 @@ Each step ends with a commit + push to GitHub, so the repo always shows a workin
 | 4 | Hard model | `src/hard_milp.py`: time-expanded SWAP MILP (HiGHS) | Formulation (hard) | ✅ pushed |
 | 5 | Verification + baseline | `src/verify.py`: replay, CheckMap, unitary check, SABRE | Solution: "verification needed" | ✅ pushed |
 | 6 | Experiments | `experiments/run_all.py` → `results.csv`, `solutions.json` | Solution: objective + key variables | ✅ pushed |
-| 7 | Analysis & plots | `analysis/`: layouts on chip, easy vs hard vs SABRE bars, solve time vs size, price of realism | Analysis | ⬜ |
-| 8 | Formulation + results slides | `docs/` deck for the 10-min presentation | Milestones 2–3 | ⬜ |
-| 9 | Reproducibility | pinned `requirements.txt`, data download script, step-by-step README for Windows/macOS/Linux, tested on a fresh clone | Code submission | ⬜ |
+| 7 | Analysis & plots + full-chip scale run | `experiments/run_scale.py`, `analysis/plots.py` → figures + `analysis/summary.md` | Analysis | ✅ pushed |
+| 8 | One-command model | `route.py`: easy + SABRE + exact search + MILP + verification on any circuit | Solution demo | ✅ pushed |
+| 9 | Reproducibility | pinned `requirements.txt`, data download script, step-by-step README for Windows/macOS/Linux, tested on a fresh clone | Code submission | ✅ pushed |
 | 10 | Final report | `report/`: formulations, results, verification, discussion | Final report | ⬜ |
 
 ## Step details
@@ -35,6 +35,8 @@ Each step ends with a commit + push to GitHub, so the repo always shows a workin
 **6. Experiments.** All QASMBench small circuits with ≥ 3 qubits and ≤ 45 distinct two-qubit gates, 120 s solver limit. Also re-solve with R+1 SWAP rounds per gap to show R is large enough.
 Result: 26 circuits, all verified. Hard model proven optimal on 22 (17 by the MILP alone, 5 more by the exact search); easy layout + optimal routing proven optimal on 24. Still open: dnn_n8, ising_n10, qpe_n9 (too many initial placements for the search) and qaoa_n6 (best 8, proven ≥ 4). The easy layout costs up to ~3× the hard optimum (e.g. error_correctiond3_n5 9 vs 3, qec_en_n5 4 vs 1, adder_n4 4 vs 2).
 
-**7. Analysis.** Price of realism = easy-ideal (0 SWAPs) vs hard optimum. Value of joint optimization = easy layout + optimal routing vs hard optimum. Success-probability estimate `(1-ε)^(3·SWAPs)`. Scaling: MILP size and time vs circuit size, and where it stops being tractable.
+**7. Analysis (done).** Full 127-qubit run on 51 small + medium circuits (8 skipped: unparsable or > 5000 CNOTs). Easy layout + SABRE needs 2.0× the SWAPs of SABRE on average; MILP grows to 1.9M variables on the full chip, against 2,764 for the largest model solved to optimality. Limitation found: ising_n10 needs 0 SWAPs on the full chip but 5 in its BFS block, so block results are optimal for the block only.
+
+Original plan for 7: Price of realism = easy-ideal (0 SWAPs) vs hard optimum. Value of joint optimization = easy layout + optimal routing vs hard optimum. Success-probability estimate `(1-ε)^(3·SWAPs)`. Scaling: MILP size and time vs circuit size, and where it stops being tractable.
 
 **9. Reproducibility.** Goal: a teammate clones the repo, follows the README, and gets the same `results.csv`.

@@ -67,7 +67,7 @@ The committed `experiments/results/` already contains the outputs, so `analysis/
 
 ## Results
 
-See [analysis/summary.md](analysis/summary.md) and [analysis/figures/](analysis/figures/). In short: on 26 small circuits the hard model is proven optimal on 22. The easy model's layout needs on average about twice as many SWAPs as the hard optimum (up to 4×). Exact methods stop scaling at about 6–8 logical qubits; on the full 127-qubit chip only heuristics remain practical.
+See [analysis/summary.md](analysis/summary.md) and [analysis/figures/](analysis/figures/). In short: on 26 small circuits the hard model is proven optimal on 22, and the easy model's layout needs 1.7× the hard optimum on average (up to 4×). On the full 127-qubit chip (51 small + medium circuits) the easy layout needs 2.0× the SWAPs of SABRE. Exact methods stop scaling at about 6–8 logical qubits. Chip-block results are optimal for the block, not necessarily the whole chip (see ising_n10 in the summary).
 
 ## Repository layout
 
