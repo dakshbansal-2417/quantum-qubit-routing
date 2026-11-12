@@ -177,6 +177,25 @@ def greedy_warm_start(gates, layout, hw: Hardware) -> WarmStart:
                      gaps)
 
 
+def model_size(gates, n: int, hw: Hardware, warm: WarmStart, rounds_per_gate: int = 2,
+               fix_layout: bool = False) -> dict:
+    """Variables / constraints the MILP would have, without building it.
+
+    Used to show where the model stops being practical (e.g. on the full chip).
+    """
+    m, E = hw.num_qubits, len(hw.edges)
+    K = len(warm.gaps)
+    rounds = [max(rounds_per_gate if (k > 0 or fix_layout) else 0, len(warm.gaps[k]))
+              for k in range(K)]
+    S = sum(rounds) + 1
+    T = S - 1
+    pairs = sum(len({tuple(sorted(gates[j])) for j in range(len(gates)) if warm.slot_of[j] == k})
+                for k in range(K))
+    deg_gt1 = sum(1 for p in range(m) if hw.graph.degree(p) > 1)
+    rows = (n * S + m * S + 2 * m * pairs + deg_gt1 * T + 2 * n * E * T + E * T + m * n * T)
+    return {"vars": n * m * S + E * T, "constraints": rows, "states": S}
+
+
 def solve_hard(gates, n: int, hw: Hardware, warm_starts: list[WarmStart],
                rounds_per_gate: int = 2, fix_layout: bool = False,
                time_limit: float = 120.0, verbose: bool = False) -> HardResult:
